@@ -21,20 +21,20 @@ function main() {
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enablePan = false;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
   controls.target.set(0, 5, 0);
   controls.update();
 
   const ambient = new THREE.AmbientLight(0xffffff, 0.3);
   scene.add(ambient);
   const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-  dirLight.position.set(10, 20, 10);
+  dirLight.position.set(-20, 2.8, 10);
   scene.add(dirLight);
 
   const loader = new THREE.TextureLoader();
-  const colorMap = loader.load('public/textures/bricks/Bricks073C_1K-JPG_Color.jpg');
-  const normalMap = loader.load('public/textures/bricks/Bricks073C_1K-JPG_NormalGL.jpg');
-  const roughnessMap = loader.load('public/textures/bricks/Bricks073C_1K-JPG_Roughness.jpg');
+  const colorMap = loader.load('textures/bricks/Bricks073C_1K-JPG_Color.jpg');
+  const normalMap = loader.load('textures/bricks/Bricks073C_1K-JPG_NormalGL.jpg');
+  const roughnessMap = loader.load('textures/bricks/Bricks073C_1K-JPG_Roughness.jpg');
 
   const tableGeo = new THREE.BoxGeometry(20, 0.5, 40);
   const tableMat = new THREE.MeshStandardMaterial({
@@ -96,7 +96,7 @@ function main() {
 
   const lightFolder = gui.addFolder('Lumière');
   lightFolder.add(dirLight.position, 'x', -20, 20).name('X');
-  lightFolder.add(dirLight.position, 'y', 0, 50).name('Y');
+  lightFolder.add(dirLight.position, 'y', 2.8, 50).name('Y');
   lightFolder.open();
 
   const scoreBoard = document.createElement('div');
