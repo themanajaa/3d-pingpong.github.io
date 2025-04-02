@@ -32,9 +32,11 @@ function main() {
   scene.add(dirLight);
 
   const loader = new THREE.TextureLoader();
-  const colorMap = loader.load('textures/bricks/Bricks073C_1K-JPG_Color.jpg');
-  const normalMap = loader.load('textures/bricks/Bricks073C_1K-JPG_NormalGL.jpg');
-  const roughnessMap = loader.load('textures/bricks/Bricks073C_1K-JPG_Roughness.jpg');
+  const colorMap = loader.load('textures/bois/wood_table_001_diff_4k.jpg');
+  const normalMap = loader.load('textures/bois/wood_table_001_nor_gl_4k.jpg');
+  const roughnessMap = loader.load('textures/bois/wood_table_001_rough_4k.jpg');
+  const redTexture = loader.load('textures/metal/PaintedMetal004.png');
+  const blueTexture = loader.load('textures/metal/PaintedMetal002.png');
 
   const tableGeo = new THREE.BoxGeometry(20, 0.5, 40);
   const tableMat = new THREE.MeshStandardMaterial({
@@ -48,9 +50,13 @@ function main() {
   scene.add(table);
 
   const paddleGeo = new THREE.BoxGeometry(4, 1, 1);
-  const paddleMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
-  paddleLeft = new THREE.Mesh(paddleGeo, paddleMat);
-  paddleRight = new THREE.Mesh(paddleGeo, paddleMat);
+  //const paddleMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
+  const redPaddleMat = new THREE.MeshStandardMaterial({ color: 0xa63c3c});
+  const bluePaddleMat = new THREE.MeshStandardMaterial({ color: 0x3a5f81 });
+  //const redPaddleMat = new THREE.MeshStandardMaterial({ map: redTexture });
+  //const bluePaddleMat = new THREE.MeshStandardMaterial({ map: blueTexture });
+  paddleLeft = new THREE.Mesh(paddleGeo, redPaddleMat);
+  paddleRight = new THREE.Mesh(paddleGeo, bluePaddleMat);
   paddleLeft.position.set(0, 0.5, -18);
   paddleRight.position.set(0, 0.5, 18);
   scene.add(paddleLeft);
@@ -81,7 +87,7 @@ function main() {
   ball.position.set(0, 0.7, 0);
   scene.add(ball);
 
-  ballVelocity = new THREE.Vector3(0.2, 0, 0.4);
+  ballVelocity = new THREE.Vector3(0.4, 0, 0.2);
 
   composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
@@ -99,6 +105,19 @@ function main() {
   lightFolder.add(dirLight.position, 'y', 2.8, 50).name('Y');
   lightFolder.open();
 
+  const actions = {
+    resetScore() {
+      score.left = 0;
+      score.right = 0;
+      updateScore();
+    },
+    resetBall() {
+      resetBall();
+    }
+  };
+  gui.add(actions, 'resetScore').name('Reset Score');
+  gui.add(actions, 'resetBall').name('Reset Ball');
+
   const scoreBoard = document.createElement('div');
   scoreBoard.style.position = 'absolute';
   scoreBoard.style.top = '10px';
@@ -111,7 +130,7 @@ function main() {
   document.body.appendChild(scoreBoard);
 
   function updateScore() {
-    document.getElementById('scoreBoard').innerText = `Left: ${score.left}  |  Right: ${score.right}`;
+    document.getElementById('scoreBoard').innerText = `Red: ${score.left}  |  Blue: ${score.right}`;
   }
 
   window.addEventListener('keydown', (e) => keys[e.code] = true);
@@ -131,19 +150,24 @@ function main() {
     if (keys['KeyA']) paddleLeft.position.x -= 0.5;
     if (keys['KeyD']) paddleLeft.position.x += 0.5;
 
+    const minX = -10 + 2;
+    const maxX = 10 - 2;
+    paddleLeft.position.x = THREE.MathUtils.clamp(paddleLeft.position.x, minX, maxX);
+    paddleRight.position.x = THREE.MathUtils.clamp(paddleRight.position.x, minX, maxX);
+
     ball.position.add(ballVelocity);
 
     if (ball.position.x <= -10 || ball.position.x >= 10) ballVelocity.x *= -1;
 
-    if (ball.position.distanceTo(paddleLeft.position) < 1.5 && ball.position.z < paddleLeft.position.z + 1) ballVelocity.z *= -1;
-    if (ball.position.distanceTo(paddleRight.position) < 1.5 && ball.position.z > paddleRight.position.z - 1) ballVelocity.z *= -1;
+    if (ball.position.distanceTo(paddleLeft.position) < 2 && ball.position.z < paddleLeft.position.z + 1) ballVelocity.z *= -1;
+    if (ball.position.distanceTo(paddleRight.position) < 2 && ball.position.z > paddleRight.position.z - 1) ballVelocity.z *= -1;
 
-    if (ball.position.z < -20) {
+    if (ball.position.z < -18) {
       score.right++;
       updateScore();
       resetBall();
     }
-    if (ball.position.z > 20) {
+    if (ball.position.z > 18) {
       score.left++;
       updateScore();
       resetBall();
@@ -152,7 +176,7 @@ function main() {
 
   function resetBall() {
     ball.position.set(0, 0.7, 0);
-    ballVelocity.set((Math.random() - 0.5), 0, (Math.random() < 0.5 ? 1 : -1) * 0.4);
+    ballVelocity.set((Math.random() - 0.5), 0, (Math.random() < 0.5 ? 1 : -1) * ballVelocity.x);
   }
 
   updateScore();
