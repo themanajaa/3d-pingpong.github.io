@@ -99,6 +99,21 @@ function main() {
   lightFolder.add(dirLight.position, 'y', 0, 50).name('Y');
   lightFolder.open();
 
+  const scoreBoard = document.createElement('div');
+  scoreBoard.style.position = 'absolute';
+  scoreBoard.style.top = '10px';
+  scoreBoard.style.left = '50%';
+  scoreBoard.style.transform = 'translateX(-50%)';
+  scoreBoard.style.color = 'white';
+  scoreBoard.style.fontSize = '24px';
+  scoreBoard.style.fontFamily = 'monospace';
+  scoreBoard.id = 'scoreBoard';
+  document.body.appendChild(scoreBoard);
+
+  function updateScore() {
+    document.getElementById('scoreBoard').innerText = `Left: ${score.left}  |  Right: ${score.right}`;
+  }
+
   window.addEventListener('keydown', (e) => keys[e.code] = true);
   window.addEventListener('keyup', (e) => keys[e.code] = false);
 
