@@ -90,8 +90,8 @@ function main() {
 
   const gui = new GUI();
   const gameFolder = gui.addFolder('Game Controls');
-  gameFolder.add(ballVelocity, 'x', -1, 1).name('X');
-  gameFolder.add(ballVelocity, 'z', -1, 1).name('Z');
+  gameFolder.add(ballVelocity, 'x', -0.2, 0.4).name('Vélocité X');
+  gameFolder.add(ballVelocity, 'z', -0.2, 0.4).name('Vélocité Z');
   gameFolder.open();
 
   const lightFolder = gui.addFolder('Lumière');
