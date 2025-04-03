@@ -157,16 +157,41 @@ function main() {
 
     ball.position.add(ballVelocity);
 
-    if (ball.position.x <= -10 || ball.position.x >= 10) ballVelocity.x *= -1;
+    if (ball.position.x <= -10 || ball.position.x >= 10) {
+      ballVelocity.x *= -1;
+    }
 
-    if (ball.position.distanceTo(paddleLeft.position) < 2 && ball.position.z < paddleLeft.position.z + 1) ballVelocity.z *= -1;
-    if (ball.position.distanceTo(paddleRight.position) < 2 && ball.position.z > paddleRight.position.z - 1) ballVelocity.z *= -1;
+    const ballBox = new THREE.Box3().setFromObject(ball);
+    const leftBox = new THREE.Box3().setFromObject(paddleLeft);
+    const rightBox = new THREE.Box3().setFromObject(paddleRight);
+
+    const acceleration = 1.05;
+    const maxSpeed = 2.5; 
+
+    if (ballBox.intersectsBox(leftBox)) {
+      const offset = ball.position.x - paddleLeft.position.x;
+      ballVelocity.x = offset * 0.15;
+      ballVelocity.z = Math.abs(ballVelocity.z);
+      ballVelocity.multiplyScalar(acceleration);
+      ballVelocity.clampLength(0, maxSpeed);
+      ball.position.z = paddleLeft.position.z + 1.1;
+    }
+
+    if (ballBox.intersectsBox(rightBox)) {
+      const offset = ball.position.x - paddleRight.position.x;
+      ballVelocity.x = offset * 0.15;
+      ballVelocity.z = -Math.abs(ballVelocity.z);
+      ballVelocity.multiplyScalar(acceleration);
+      ballVelocity.clampLength(0, maxSpeed);
+      ball.position.z = paddleRight.position.z - 1.1;
+    }
 
     if (ball.position.z < -18) {
       score.right++;
       updateScore();
       resetBall();
     }
+
     if (ball.position.z > 18) {
       score.left++;
       updateScore();
