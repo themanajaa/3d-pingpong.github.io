@@ -5,7 +5,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-let ball, paddleLeft, paddleRight, ballVelocity, score = { left: 0, right: 0 }, composer, dynamicCamera = true;
+let ball, paddleLeft, paddleRight, ballVelocity, score = { left: 0, right: 0 }, composer, dynamicCamera = true, gameStarted = false, gameOver = false;
 const keys = {};
 
 function main() {
@@ -125,6 +125,20 @@ function main() {
       dynamicCamera = value;
   });
 
+  const gameControls = {
+    restartGame() {
+      score.left = 0;
+      score.right = 0;
+      updateScore();
+      gameOver = false;
+      resetBall();
+      document.getElementById('winOverlay').style.opacity = 0;
+      showIntro();
+    }
+  };
+  gui.add(gameControls, 'restartGame').name('Nouvelle manche');
+  
+
 
   const scoreBoard = document.createElement('div');
   scoreBoard.style.position = 'absolute';
@@ -138,13 +152,16 @@ function main() {
   document.body.appendChild(scoreBoard);
 
   function updateScore() {
-    document.getElementById('scoreBoard').innerText = `Red: ${score.left}  |  Blue: ${score.right}`;
+    document.getElementById('scoreBoard').innerHTML = `
+      <span style="color:#3a5f81;">Blue: ${score.right}</span> |
+      <span style="color:#a63c3c;">Red: ${score.left}</span> 
+    `;
   }
 
   window.addEventListener('keydown', (e) => keys[e.code] = true);
   window.addEventListener('keyup', (e) => keys[e.code] = false);
 
-  function animate(time) {
+  function animate(time) {   
     if (dynamicCamera) {
       const radius = 30;
       const camSpeed = 0.2;
@@ -158,6 +175,10 @@ function main() {
     }    
 
     requestAnimationFrame(animate);
+    if (!gameStarted || gameOver) {
+      composer.render();
+      return;
+    } 
     updateGame(time);
     composer.render();
   }
@@ -217,6 +238,16 @@ function main() {
       updateScore();
       resetBall();
     }
+
+    if (score.right >= 10) {
+      showWinMessage('BLUE');
+      return;
+    }
+    if (score.left >= 10) {
+      showWinMessage('RED');
+      return;
+    }
+    
   }
 
   function resetBall() {
@@ -224,8 +255,39 @@ function main() {
     ballVelocity.set((Math.random() - 0.5), 0, (Math.random() < 0.5 ? 1 : -1) * ballVelocity.x);
   }
 
+  function showIntro() {
+    const introOverlay = document.getElementById('introOverlay');
+    introOverlay.textContent = 'READY...';
+    introOverlay.style.opacity = 1;
+    gameStarted = false;
+  
+    setTimeout(() => {
+      introOverlay.textContent = 'GO!';
+    }, 1500);
+  
+    setTimeout(() => {
+      introOverlay.style.opacity = 0;
+      gameStarted = true;
+    }, 3000);
+  }  
+
+  function showWinMessage(winner) {
+    const winOverlay = document.getElementById('winOverlay');
+  
+    if (winner === 'BLUE') {
+      winOverlay.style.color = '#3a5f81';
+    } else if (winner === 'RED') {
+      winOverlay.style.color = '#a63c3c';
+    }
+  
+    winOverlay.textContent = `${winner} WINS!`;
+    winOverlay.style.opacity = 1;
+    gameOver = true;
+  }  
+
   updateScore();
   animate();
+  showIntro();
 }
 
 main();
