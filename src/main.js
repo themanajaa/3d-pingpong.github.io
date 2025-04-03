@@ -5,7 +5,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-let ball, paddleLeft, paddleRight, ballVelocity, score = { left: 0, right: 0 }, composer;
+let ball, paddleLeft, paddleRight, ballVelocity, score = { left: 0, right: 0 }, composer, dynamicCamera = true;
 const keys = {};
 
 function main() {
@@ -117,6 +117,14 @@ function main() {
   };
   gui.add(actions, 'resetScore').name('Reset Score');
   gui.add(actions, 'resetBall').name('Reset Ball');
+  
+  const cameraOptions = { dynamicCamera: true };
+  gui.add(cameraOptions, 'dynamicCamera')
+    .name('Caméra dynamique')
+    .onChange((value) => {
+      dynamicCamera = value;
+  });
+
 
   const scoreBoard = document.createElement('div');
   scoreBoard.style.position = 'absolute';
@@ -137,17 +145,17 @@ function main() {
   window.addEventListener('keyup', (e) => keys[e.code] = false);
 
   function animate(time) {
-    const radius = 30;
-    const camSpeed = 0.2;
-
-    const angle = time * 0.0001 * camSpeed;
-
-    camera.position.x = Math.cos(angle) * radius;
-    camera.position.z = Math.sin(angle) * radius;
-    camera.position.y = 15;
-
-    camera.lookAt(0, 0, 0);
-    camera.position.y = 12 + Math.sin(angle * 2) * 2;
+    if (dynamicCamera) {
+      const radius = 30;
+      const camSpeed = 0.2;
+      const angle = time * 0.0001 * camSpeed;
+    
+      camera.position.x = Math.cos(angle) * radius;
+      camera.position.z = Math.sin(angle) * radius;
+      camera.position.y = 12 + Math.sin(angle * 2) * 2;
+    
+      camera.lookAt(0, 0, 0);
+    }    
 
     requestAnimationFrame(animate);
     updateGame(time);
