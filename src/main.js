@@ -137,6 +137,18 @@ function main() {
   window.addEventListener('keyup', (e) => keys[e.code] = false);
 
   function animate(time) {
+    const radius = 30;
+    const camSpeed = 0.2;
+
+    const angle = time * 0.0001 * camSpeed;
+
+    camera.position.x = Math.cos(angle) * radius;
+    camera.position.z = Math.sin(angle) * radius;
+    camera.position.y = 15;
+
+    camera.lookAt(0, 0, 0);
+    camera.position.y = 12 + Math.sin(angle * 2) * 2;
+
     requestAnimationFrame(animate);
     updateGame(time);
     composer.render();
