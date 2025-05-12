@@ -5,6 +5,21 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+  dsn: "https://a3cba31734e8caf17b0ff0dfa7fe95ee@o4509310067539968.ingest.de.sentry.io/4509310074683472",
+  integrations: [Sentry.browserTracingIntegration()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true,
+});
+
 let ball, paddleLeft, paddleRight, ballVelocity, score = { left: 0, right: 0 }, composer, dynamicCamera = true, gameStarted = false, gameOver = false;
 const keys = {};
 
