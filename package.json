@@ -9,6 +9,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@sentry/browser": "^9.17.0",
     "three": "^0.175.0"
   },
   "devDependencies": {
