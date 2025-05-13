@@ -82,8 +82,8 @@ function main() {
 
   const paddleGeo = new BoxGeometry(4, 1, 1);
   //const paddleMat = new MeshStandardMaterial({ color: 0x00ffcc });
-  const redPaddleMat = new MeshStandardMaterial({ color: 0xa63c3c});
-  const bluePaddleMat = new MeshStandardMaterial({ color: 0x3a5f81 });
+  const redPaddleMat = new MeshStandardMaterial({ color: 0xe06262});
+  const bluePaddleMat = new MeshStandardMaterial({ color: 0x5fa4e3 });
   //const redPaddleMat = new MeshStandardMaterial({ map: redTexture });
   //const bluePaddleMat = new MeshStandardMaterial({ map: blueTexture });
   paddleLeft = new Mesh(paddleGeo, redPaddleMat);
@@ -185,8 +185,8 @@ function main() {
 
   function updateScore() {
     document.getElementById('scoreBoard').innerHTML = `
-      <span style="color:#3a5f81;">Blue: ${score.right}</span> |
-      <span style="color:#a63c3c;">Red: ${score.left}</span> 
+      <span style="color:#5fa4e3;">Blue: ${score.right}</span> |
+      <span style="color:#e06262;">Red: ${score.left}</span> 
     `;
   }
 
@@ -307,9 +307,9 @@ function main() {
     const winOverlay = document.getElementById('winOverlay');
   
     if (winner === 'BLUE') {
-      winOverlay.style.color = '#3a5f81';
+      winOverlay.style.color = '#5fa4e3';
     } else if (winner === 'RED') {
-      winOverlay.style.color = '#a63c3c';
+      winOverlay.style.color = '#e06262';
     }
   
     winOverlay.textContent = `${winner} WINS!`;
